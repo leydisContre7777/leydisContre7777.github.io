@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+  <head>
+      <title>Drupal and other stuff - Fluid, responsive blog theme for Jekyll</title>
+      <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+      <meta http-equiv="content-language" content="en-gb" />
+      <meta name="description" content="Fluid, responsive blog theme for Jekyll">
+      <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+      <link href="//fonts.googleapis.com/css?family=Open+Sans:400italic,400,300,700|Lora:400,700,400italic" rel="stylesheet" type="text/css">
+      <link rel="stylesheet" type="text/css" href="/css/main.css" />
+      <link href="atom.xml" type="application/atom+xml" rel="alternate" title="Site ATOM Feed">
+  </head>
+
+  <body>
+    <!--[if lt IE 7]>
+        <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+    <![endif]-->
+
+    <div class="off-canvas">
+      <figure class="avatar">
+        <img src="/assets/img/leydis.png" alt="Picture" title="That's me, Leydis Daniela Contreras.">
+      </figure>
+      <div class="bio">
+          <h1>Hi, I'm Leydis Daniela Contreras.</h1>
+          <p>I'm Drupal developer and I love technology, learn things and this is my blog, where I write about everything: code, development software and even my life</p>
+      </div>
+      <nav>
+        <h6>Follow me on</h6>
+        <ul>
+          
+          <li><a target="_blank" href="https://twitter.com/leydisDanCH">Twitter</a></li>
+          
+          
+          <li><a target="_blank" href="https://github.com/leydisContre7777">Github</a></li>
+          
+          
+          <li><a target="_blank" href="https://stackoverflow.com/3595989/daniela">Stackoverflow</a></li>
+          
+        </ul>
+      </nav>
+    </div>
+
+
+    <div class="site-wrapper">
+
+      <header>
+        <div class="h-wrap">
+          <h1 class="title"><a href="/" title="Back to Homepage">Drupal and other stuff</a></h1>
+          <a class="menu-icon" title="Open Bio"><span class="lines"></span></a>
+        </div>
+      </header>
+
+      <main>
+        <section class="single-wrap">
+  <article class="single-content" itemscope itemtype="http://schema.org/BlogPosting">
+    <div class="feat">
+      <h5 class="page-date">
+        <time datetime="2018-07-18T18:57:51+02:00" itemprop="datePublished">
+          18 July 2018
+        </time>
+      </h5>
+    </div>
+    <h1 class="page-title" itemprop="name headline">Beginning with Phphunit and Drupal 7!</h1>
+    <div itemprop="articleBody">
+      <p>I know
+<em>Drupal 8</em> is the current version to develop on Drupal, but nowadays still exist a lot of companies with sites developed on Drupal 7.</p>
+
+<p>So, if you still working on Drupal 7 projects, probably this post will be useful for you, I’m going to show you a little example from a custom module that I create, where a use <em>Phphunit</em> to test:</p>
+
+<p>Requirements:</p>
+
+<ul>
+  <li>composer</li>
+  <li>Phpunit &gt;= 4.8</li>
+  <li>PHP &gt;= 5.6</li>
+  <li>Drupal 7</li>
+</ul>
+
+<p>Install Phpunit using composer, remember phpunit 4 is not longer supported.  (https://phpunit.de/getting-started/phpunit-5.html)</p>
+
+<div class="highlight"><pre><code class="language-html" data-lang="html">composer require --dev phpunit/phpunit ^4.8</code></pre></div>
+
+<p>I’m using POO in this custom module, you can download or fork this module here, please note that you need a couple dependencies to install the module:
+https://github.com/leydisContre7777/forum_notification</p>
+
+<p>Ok, let’s start this example, where I mocked some databases Drupal function’s, this is just a small  beginning to test with Phpunit and Drupal 7.</p>
+
+<p>So, In the custom forum_notification module, I created the following class which I call from .module file:</p>
+
+<div class="highlight"><pre><code class="language-html" data-lang="html">forum_notification/src/Forum/ForumCounter.php</code></pre></div>
+
+<p>This file contains the functions that I’m using to count and save the participation on the Forum configured by the user, then, I created a test:</p>
+
+<div class="highlight"><pre><code class="language-html" data-lang="html">namespace Drupal\forum_notification\Forum;
+
+/**
+ * Created by PhpStorm.
+ * User: ldcontreras
+ * Date: 30/05/18
+ * Time: 18:26
+ */
+class ForumCounter implements ForumInterface {
+
+	/**
+	 * @param $forum
+	 * @param $uid
+	 * @return array()
+	 */
+	public function setForumCounter($forum, $uid) {
+		$counterState = db_update(&#39;forum_counter_states&#39;)
+			-&gt;fields(array(
+				&#39;state&#39; =&gt; &#39;read&#39;,
+			))
+			-&gt;condition(&#39;uid&#39;, $uid)
+			-&gt;condition(&#39;tid&#39;, $forum)
+			-&gt;execute();
+
+		return $counterState;
+
+	}
+
+}</code></pre></div>
+
+<p>The test of <em>setForumCounter</em> will looks like this:</p>
+
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="err">&lt;</span>?php
+/**
+ * Created by PhpStorm.
+ * User: ldcontreras
+ * Date: 8/06/18
+ * Time: 10:02
+ */
+
+namespace Drupal\forum_innovation\Tests;
+
+
+/**
+ * Test the  ForumCounter Class.
+ * @coversDefaultClass  \Drupal\forum_innovation\Forum
+ * @group utility
+ */
+class ForumCounterTest extends \PHPUnit_Framework_TestCase {
+
+	/**
+	 * @covers::setForumCounter
+	 */
+
+	public function testSetForumCounter() {
+		$set_counter = $this-&gt;getMockBuilder(&#39;Drupal\forum_innovation\Forum\ForumCounter&#39;)
+			-&gt;setMethods(array(&#39;setForumCounter&#39;))
+			-&gt;getMock();
+
+		$set_counter-&gt;expects($this-&gt;once())
+			-&gt;method(&#39;setForumCounter&#39;)-&gt;will($this-&gt;returnValue(TRUE));
+
+		$set_counter-&gt;setForumCounter(83, 3024);
+	}
+}</code></pre></div>
+
+<p>The previous test should take it as an example, because the <em>setForumCounter</em> only contains the db_update drupal function, and it doesn’t make too much sense to test that function, because
+unit test shouldn’t depends on the database, I mean you can call the drupal bootsrap in a Phpunit Test, but its performace will be very slow and that’s why I mocked the database functions. But let’s getting  this more sense, creating another function that depends from the <em>setForumCounter</em></p>
+
+<div class="highlight"><pre><code class="language-html" data-lang="html">function getForumCounter($forum, $uid) {
+
+		$notification = $this-&gt;setForumCounter($forum, $uid);
+
+		if ($notification) {  //the notification was read by user
+
+			return (&#39;The notification was read&#39;);
+
+		}
+
+
+}</code></pre></div>
+
+<p>The test for getForumCounter function, will looks like this:</p>
+
+<div class="highlight"><pre><code class="language-html" data-lang="html">public function testGetForumCounter() {
+    $set_counter = $this-&gt;getMockBuilder(&#39;Drupal\forum_innovation\Forum\ForumCounter&#39;)
+        -&gt;setMethods(array(&#39;setForumCounter&#39;))
+        -&gt;getMock();
+
+    $set_counter-&gt;expects($this-&gt;once())
+        -&gt;method(&#39;setForumCounter&#39;)-&gt;will($this-&gt;returnValue(TRUE));
+
+    $set_counter-&gt;setForumCounter(83, 3024);
+
+    $this-&gt;assertEquals(
+        &#39;The notification was read&#39;,
+        &#39;The notification was read&#39;
+    );
+}</code></pre></div>
+
+<p>That’s it!! pretty simple example to start testing with Phpunit in Drupal 7!</p>
+
+    </div>
+    <div class="feat share">
+      <a href="http://twitter.com/share" class="popup">
+        <span class="icon-twitter"></span>
+      </a>
+    </div>
+    
+      <a rel="next" href="/2018/07/30/fullstack-frontend-backend/" id="next">
+        <span class="nav-title nav-title-next">newer</span> &rarr;
+      </a>
+    
+    
+  </article>
+</section>
+
+      </main>
+
+      <footer>
+        <small>Powered by Jekyll - Theme: <a href="https://github.com/m3xm/hikari-for-Jekyll">hikari</a> - &copy; Leydis Daniela Contreras</small>
+      </footer>
+
+    </div>
+    
+
+    <script src="/js/main.js"></script>
+    
+    
+      <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-47727049-1', 'm3xm.github.io');
+        ga('send', 'pageview');
+      </script>
+    
+
+  </body>
+</html>

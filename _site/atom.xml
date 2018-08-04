@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Drupal and other stuff</title>
+  <id>https://leydiscontre7777.github.io</id>
+  <link href="https://leydiscontre7777.github.io" />
+  <link href="https://leydiscontre7777.github.io/atom.xml" rel="self" />
+  <updated>2018-08-04T21:06:00+02:00</updated>
+  <rights>Copyright 2014, Leydis Daniela Contreras</rights>
+  <author>
+    <name>Leydis Daniela Contreras</name>
+  </author>
+  
+    <entry>
+      <title>Fullstack, frontend or backend?</title>
+      <link href="https://leydiscontre7777.github.io/2018/07/30/fullstack-frontend-backend/" />
+      <summary type="html">&lt;p&gt;If you are a developer, you probably ask this question before: “be a fullstack, be frontend or be backend?”. If you didn’t found an answer yet.&lt;/p&gt;
+
+&lt;p&gt;I hope to help you a little to make the right choise.  Well,  nowadays companies search for fullstack profile, ok, let’s define what means been fullstack?.&lt;/p&gt;
+
+&lt;p&gt;Fullstack developer is who sometimes  create the layout for a web page and sometimes  need to build all its functionality, so, he/she probably needs to know/work with the following technologies:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;SASS/LESS&lt;/li&gt;
+  &lt;li&gt;Jquery&lt;/li&gt;
+  &lt;li&gt;HTML&lt;/li&gt;
+  &lt;li&gt;PHP/JAVA/PHYTON (Backend)&lt;/li&gt;
+  &lt;li&gt;Other technologies you want to mention!&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;But the handicap been a fullstack developer, is that you probably are not good enough  in back or front, because these profiles tends to be more efficient doing backend or more frontend, and not both
+of them at the same time.&lt;/p&gt;
+
+&lt;p&gt;Anyway, is true that backend profile should know HTML, Javascript and little CSS, because sometimes when you maintain a project, you need to use CSS, for example: the client needs to change text position of paragraphs.
+In that case you need to know the main css properties.&lt;/p&gt;
+
+&lt;p&gt;So, finally, focus in one technology, but don’t to learn a little back (is you are frontend) or front (if you are backend).&lt;/p&gt;
+
+</summary>
+      <id>https://leydiscontre7777.github.io/2018/07/30/fullstack-frontend-backend/</id>
+      <updated>2018-07-30T18:57:51+02:00</updated>
+      <author>
+        <name>Leydis Daniela Contreras</name>
+      </author>
+    </entry>
+  
+    <entry>
+      <title>Beginning with Phphunit and Drupal 7!</title>
+      <link href="https://leydiscontre7777.github.io/2018/07/18/beginning-with-phpunit-drupal-7/" />
+      <summary type="html">&lt;p&gt;I know
+&lt;em&gt;Drupal 8&lt;/em&gt; is the current version to develop on Drupal, but nowadays still exist a lot of companies with sites developed on Drupal 7.&lt;/p&gt;
+
+&lt;p&gt;So, if you still working on Drupal 7 projects, probably this post will be useful for you, I’m going to show you a little example from a custom module that I create, where a use &lt;em&gt;Phphunit&lt;/em&gt; to test:&lt;/p&gt;
+
+&lt;p&gt;Requirements:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;composer&lt;/li&gt;
+  &lt;li&gt;Phpunit &amp;gt;= 4.8&lt;/li&gt;
+  &lt;li&gt;PHP &amp;gt;= 5.6&lt;/li&gt;
+  &lt;li&gt;Drupal 7&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Install Phpunit using composer, remember phpunit 4 is not longer supported.  (https://phpunit.de/getting-started/phpunit-5.html)&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-html&quot; data-lang=&quot;html&quot;&gt;composer require --dev phpunit/phpunit ^4.8&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;I’m using POO in this custom module, you can download or fork this module here, please note that you need a couple dependencies to install the module:
+https://github.com/leydisContre7777/forum_notification&lt;/p&gt;
+
+&lt;p&gt;Ok, let’s start this example, where I mocked some databases Drupal function’s, this is just a small  beginning to test with Phpunit and Drupal 7.&lt;/p&gt;
+
+&lt;p&gt;So, In the custom forum_notification module, I created the following class which I call from .module file:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-html&quot; data-lang=&quot;html&quot;&gt;forum_notification/src/Forum/ForumCounter.php&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;This file contains the functions that I’m using to count and save the participation on the Forum configured by the user, then, I created a test:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-html&quot; data-lang=&quot;html&quot;&gt;namespace Drupal\forum_notification\Forum;
+
+/**
+ * Created by PhpStorm.
+ * User: ldcontreras
+ * Date: 30/05/18
+ * Time: 18:26
+ */
+class ForumCounter implements ForumInterface {
+
+	/**
+	 * @param $forum
+	 * @param $uid
+	 * @return array()
+	 */
+	public function setForumCounter($forum, $uid) {
+		$counterState = db_update(&amp;#39;forum_counter_states&amp;#39;)
+			-&amp;gt;fields(array(
+				&amp;#39;state&amp;#39; =&amp;gt; &amp;#39;read&amp;#39;,
+			))
+			-&amp;gt;condition(&amp;#39;uid&amp;#39;, $uid)
+			-&amp;gt;condition(&amp;#39;tid&amp;#39;, $forum)
+			-&amp;gt;execute();
+
+		return $counterState;
+
+	}
+
+}&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;The test of &lt;em&gt;setForumCounter&lt;/em&gt; will looks like this:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-html&quot; data-lang=&quot;html&quot;&gt;&lt;span class=&quot;err&quot;&gt;&amp;lt;&lt;/span&gt;?php
+/**
+ * Created by PhpStorm.
+ * User: ldcontreras
+ * Date: 8/06/18
+ * Time: 10:02
+ */
+
+namespace Drupal\forum_innovation\Tests;
+
+
+/**
+ * Test the  ForumCounter Class.
+ * @coversDefaultClass  \Drupal\forum_innovation\Forum
+ * @group utility
+ */
+class ForumCounterTest extends \PHPUnit_Framework_TestCase {
+
+	/**
+	 * @covers::setForumCounter
+	 */
+
+	public function testSetForumCounter() {
+		$set_counter = $this-&amp;gt;getMockBuilder(&amp;#39;Drupal\forum_innovation\Forum\ForumCounter&amp;#39;)
+			-&amp;gt;setMethods(array(&amp;#39;setForumCounter&amp;#39;))
+			-&amp;gt;getMock();
+
+		$set_counter-&amp;gt;expects($this-&amp;gt;once())
+			-&amp;gt;method(&amp;#39;setForumCounter&amp;#39;)-&amp;gt;will($this-&amp;gt;returnValue(TRUE));
+
+		$set_counter-&amp;gt;setForumCounter(83, 3024);
+	}
+}&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;The previous test should take it as an example, because the &lt;em&gt;setForumCounter&lt;/em&gt; only contains the db_update drupal function, and it doesn’t make too much sense to test that function, because
+unit test shouldn’t depends on the database, I mean you can call the drupal bootsrap in a Phpunit Test, but its performace will be very slow and that’s why I mocked the database functions. But let’s getting  this more sense, creating another function that depends from the &lt;em&gt;setForumCounter&lt;/em&gt;&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-html&quot; data-lang=&quot;html&quot;&gt;function getForumCounter($forum, $uid) {
+
+		$notification = $this-&amp;gt;setForumCounter($forum, $uid);
+
+		if ($notification) {  //the notification was read by user
+
+			return (&amp;#39;The notification was read&amp;#39;);
+
+		}
+
+
+}&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;The test for getForumCounter function, will looks like this:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-html&quot; data-lang=&quot;html&quot;&gt;public function testGetForumCounter() {
+    $set_counter = $this-&amp;gt;getMockBuilder(&amp;#39;Drupal\forum_innovation\Forum\ForumCounter&amp;#39;)
+        -&amp;gt;setMethods(array(&amp;#39;setForumCounter&amp;#39;))
+        -&amp;gt;getMock();
+
+    $set_counter-&amp;gt;expects($this-&amp;gt;once())
+        -&amp;gt;method(&amp;#39;setForumCounter&amp;#39;)-&amp;gt;will($this-&amp;gt;returnValue(TRUE));
+
+    $set_counter-&amp;gt;setForumCounter(83, 3024);
+
+    $this-&amp;gt;assertEquals(
+        &amp;#39;The notification was read&amp;#39;,
+        &amp;#39;The notification was read&amp;#39;
+    );
+}&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;That’s it!! pretty simple example to start testing with Phpunit in Drupal 7!&lt;/p&gt;
+</summary>
+      <id>https://leydiscontre7777.github.io/2018/07/18/beginning-with-phpunit-drupal-7/</id>
+      <updated>2018-07-18T18:57:51+02:00</updated>
+      <author>
+        <name>Leydis Daniela Contreras</name>
+      </author>
+    </entry>
+  
+</feed>

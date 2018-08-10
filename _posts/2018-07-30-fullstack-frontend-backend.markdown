@@ -4,9 +4,9 @@ title:  "Fullstack, frontend or backend?"
 date:   2018-07-30 16:57:51
 ---
 
-If you are a developer, you probably ask this question before: "be fullstack, be frontend or be backend?". If you didn't found an answer yet,
+If you are a developer, you probably asked this question before: "be fullstack, be frontend or be backend?". If you didn't found an answer yet,
 
-I hope to help you a little to make the right choice.  Well,  nowadays companies search for fullstack profile, ok, let's define what means been fullstack?.
+I hope to help you a little to make the right choice.  Well,  nowadays companies search for fullstack profiles, ok, let's define what means been fullstack?.
 
 
 Fullstack developer is who sometimes  create the layout for a web page and sometimes  need to build all its functionality, so, he/she probably needs to know/work with the following technologies:
